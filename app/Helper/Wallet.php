@@ -4,6 +4,7 @@ namespace App\Helper;
 
 use App\Events\ReferalNotification;
 use App\Events\WalletDebitTransaction;
+use App\Events\WalletFundingEvent;
 use App\Events\WalletTopUp;
 use App\Events\WalletTransactions;
 use App\Models\Transaction;
@@ -11,17 +12,17 @@ use Illuminate\Support\Facades\DB;
 
 class Wallet
 {
-    public static function generateAcountNumber()
+    public static function generate()
     {
         $no = (string) random_int(00000000, 99999999);
         $no = "21$no";
 
         if ( strlen($no) != 10 ) {
-            return self::generateAcountNumber();
+            return self::generate();
         }
 
         if ( \App\Models\Wallet::where('account_number', $no)->count() > 0 ) {
-            return self::generateAcountNumber();
+            return self::generate();
         }
 
         return $no;
@@ -79,11 +80,6 @@ class Wallet
 //                Log::info($transactionType);
                 $prev_bal = $wallet->balance;
                 $wallet->balance += $amount;
-                //calculate i-risk points
-                $prev_point = $wallet->points;
-
-                $wallet->points += $amount/env('I_RISK_POINT');
-
                 $wallet->updated_at = now();
                 $wallet->save();
 
@@ -101,16 +97,7 @@ class Wallet
                     'transaction_type' =>  $transactionType,
                     'info'             =>  $info
                 ]);
-//                == null ? 'wallet-to-wallet' : "top-up"
-
-                $creditor = \App\Models\User::find($creditedBy);
-
-                // send notification
-                if($transactionType == 'top-up'){
-                    event(New WalletTopUp($user, $amount ,$creditor));
-                }elseif($transactionType ==  "wallet-to-wallet"){
-                    event(New WalletTransactions($user, $amount ,$creditor));
-                }
+              //  $transactionType === 'top-up' ? event(new  WalletFundingEvent($user, $amount)) : event(New  WalletFundingEvent($user, $amount));
 
                 $response = [
                     'success' => true,
@@ -153,7 +140,6 @@ class Wallet
                     'message' => "Wallet is {$wallet->status}"
                 ];
             }
-
 
             if ($amount > $wallet->balance) {
                 if (!$allow_negative) {

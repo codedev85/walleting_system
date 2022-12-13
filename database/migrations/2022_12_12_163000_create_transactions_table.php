@@ -14,18 +14,18 @@ return new class extends Migration
     public function up()
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('ref')->unique();
-            $table->unsignedBigInteger('wallet_id');
+            $table->uuid('wallet_id');
             $table->unsignedBigInteger('user_id');
             $table->float('amount',15,2);
             $table->float('prev_balance',15,2);
             $table->float('new_balance',15,2);
             $table->enum('type', ['DEBIT', 'CREDIT']);
             $table->enum('status',['successful','canceled','failed']);
-            $table->enum('transaction_type', ['wallet-to-wallet', 'top-up'])->default('wallet-to-wallet');
-            $table->string('creditor_id')->nullable();
-            $table->string('beneficiary_id')->nullable();
+            $table->enum('transaction_type', ['wallet-to-wallet', 'top-up', 'fund-withdrawal'])->default('wallet-to-wallet');
+            $table->unsignedBigInteger('creditor_id')->nullable();
+            $table->unsignedBigInteger('beneficiary_id')->nullable();
             $table->longText('info');
             $table->timestamps();
 

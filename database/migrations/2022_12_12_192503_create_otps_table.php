@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('wallets', function (Blueprint $table) {
+
+
+        Schema::create('otps', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->unsignedBigInteger('user_id');
-            $table->string('account_number', 10);
-            $table->float('balance',15,2)->default(0);
-            $table->enum('status', ['ACTIVE', 'SUSPENDED'])->default('ACTIVE');
+            $table->string('token');
+            $table->dateTime('expires_at')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('wallets');
+        Schema::dropIfExists('otps');
     }
 };

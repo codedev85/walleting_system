@@ -19,6 +19,7 @@ class AuthController extends BaseController
     public function authenticateAdmin(Request $request)
     {
 
+
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:admins',
             'password' => 'required',
