@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\CashOutEvent;
 use App\Events\VerificationMail;
 use App\Events\WalletFundingEvent;
+use App\Listeners\CashOutListener;
 use App\Listeners\VerificationMailListener;
 use App\Listeners\WalletFundingListener;
 use Illuminate\Auth\Events\Registered;
@@ -27,6 +29,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         WalletFundingEvent::class => [
             WalletFundingListener::class
+        ],
+        CashOutEvent::class => [
+            CashOutListener::class
         ]
     ];
 

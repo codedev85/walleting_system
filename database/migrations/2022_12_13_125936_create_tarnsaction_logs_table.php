@@ -16,8 +16,9 @@ return new class extends Migration
         Schema::create('tarnsaction_logs', function (Blueprint $table) {
             $table->id();
             $table->uuid('transaction_id');
-            $table->string('creditor')->nullable();
-
+            $table->enum('transaction_type',['credit','debit']);
+            $table->string('initiated_by');//user email that initiates the transaction
+            $table->longText('info')->nullable();
             $table->timestamps();
         });
     }

@@ -62,4 +62,8 @@ class User extends Authenticatable
     public function getMyWalletBalanceAttribute(){
         return $this->wallet->balance;
     }
+
+    public function pins(){
+        return $this->hasMany(WithdrawalPin::class);
+    }
 }

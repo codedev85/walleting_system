@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\User\AuthController;
 use App\Http\Controllers\Api\User\CashOutController;
 use App\Http\Controllers\Api\User\MyBankController;
+
+use App\Http\Controllers\Api\User\WithdrawalPinController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +30,7 @@ Route::group(['prefix' => 'v1'], function() {
     Route::group(['middleware' => ['auth:sanctum','is_banned']], function () {
         Route::post('verify-otp',[AuthController::class ,'verifyOtp'])->name('verify_otp');
         Route::group(['middleware' => ['must_verify']], function () {
+
             Route::get('profile',[AuthController::class ,'myProfile'])->name('profile');
             //bank list
             Route::get('banks',[MyBankController::class ,'fetchBanks'])->name('fetch_banks');
@@ -37,6 +40,8 @@ Route::group(['prefix' => 'v1'], function() {
             Route::post('add-bank',[MyBankController::class , 'addBank'])->name('add_bank');
 
             Route::post('cash-out',[CashOutController::class ,'verifyBank'])->name('cash_out');
+
+            Route::get('generate-withdrawal-pin',[WithdrawalPinController::class , 'generatePin'])->name('withdrawal_pin');
         });
 
     });

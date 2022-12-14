@@ -54,7 +54,7 @@ class CashOutRepository implements CashoutInterface
             $this->initiateTransfer($bankResolver);
 
             $info             =  'Cash Withdrawal from wallet to bank  of N' . $this->amount . ' at ' . now();
-            $transactionType  =  'Cashout';
+            $transactionType  =  'fund-withdrawal';
             $debitWallet     =    BankWallet::debit($user, $this->amount, $info, $transactionType);
 
             return  $debitWallet ;

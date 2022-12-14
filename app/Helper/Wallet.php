@@ -7,8 +7,10 @@ use App\Events\WalletDebitTransaction;
 use App\Events\WalletFundingEvent;
 use App\Events\WalletTopUp;
 use App\Events\WalletTransactions;
+use App\Jobs\CashOutJob;
 use App\Jobs\SendMailJob;
 use App\Jobs\WalletFundingJob;
+use App\Mail\CashOutMail;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 
@@ -99,8 +101,10 @@ class Wallet
                     'transaction_type' =>  $transactionType,
                     'info'             =>  $info
                 ]);
-                $transactionType === 'top-up' ?? dispatch(new WalletFundingJob($user , $amount));
-//                    dispatch(new WalletFundingJob($user , $amount));
+
+                if($transactionType === 'top-up'){
+                    dispatch(new WalletFundingJob($user , $amount));
+                }
 
                 $response = [
                     'success' => true,
@@ -176,8 +180,9 @@ class Wallet
                 ]);
 
                 // send notification
-//                $beneficiary = \App\Models\User::find($beneficiaryId);
-//                event(New WalletDebitTransaction($user, $amount ,$beneficiary));
+                if($transactionType === 'fund-withdrawal'){
+                    dispatch(new CashOutJob($user , $amount));
+                }
                 $response = [
                     'success' => true,
                     'message' => 'Wallet debit was successful.'
