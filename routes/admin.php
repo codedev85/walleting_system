@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admin\AuthController;
 use App\Http\Controllers\Api\Admin\PaymentController;
+use App\Http\Controllers\Api\Admin\UserManagementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,8 @@ Route::group(['prefix' => 'v1'], function() {
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('make-payment',[PaymentController::class , 'makePayment'])->name('make_payment');
+        Route::post('bulk-import-users',[UserManagementController::class ,'bulkUserImport']);
+        Route::get('bulk-export-users',[UserManagementController::class ,'exportData']);
 
 
 //        Route::get('verify-payment/{reference}',[PaymentController::class ,'confirmPayment'])->name('verify_payment');

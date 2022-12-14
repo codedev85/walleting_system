@@ -55,7 +55,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
-
+    'frontend_url' => env('FRONTEND_URL', 'https://frontend.dev'),
     'asset_url' => env('ASSET_URL'),
 
     /*
@@ -195,6 +195,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\PaymentServiceProvider::class,
+
 
     ],
 

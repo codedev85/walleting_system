@@ -39,16 +39,25 @@ class CashOutController extends BaseController
 
         $userId = auth()->user()->id;
 
+        $checkAttempt = $this->checkUserAttempt();
+
+        if(!$checkAttempt){
+            return $this->sendError('Oops an Error Occurred',  ['Your wallet has been suspended']);
+        }
 
         $validatePin = $this->validateWithdrawalPin($userId ,$request->pin);
 
         if(!$validatePin){
-            return $this->sendError('Oops an Error Occurred',  ['Invalid pin'. $validatePin]);
+            //check attempt count
+            $this->triggerAttemptCount();
+            return $this->sendError('Oops an Error Occurred',  ['Invalid pin']);
         }
 
         $validatePassword =  $this->validatePassword($request->password);
 
         if(!$validatePassword){
+            //check attempt count
+            $this->triggerAttemptCount();
             return $this->sendError('Oops an Error Occurred',  ['Invalid password']);
         }
 
@@ -89,5 +98,24 @@ class CashOutController extends BaseController
             return false;
         }
         return true;
+    }
+
+    private function checkUserAttempt(){
+        $user = auth()->user();
+        $wallet = $user->wallet;
+        if((int) $wallet->failed_withdrawal_attempt  === (int)  config('withdrawal.max_attempt')){
+             $wallet->status = 'SUSPENDED';
+             $wallet->save();
+             return false;
+        }
+        return true;
+    }
+
+    protected function triggerAttemptCount(){
+        $user = auth()->user();
+        $wallet = $user->wallet;
+        $wallet->failed_withdrawal_attempt += 1;
+        $wallet->save();
+        return $wallet;
     }
 }
