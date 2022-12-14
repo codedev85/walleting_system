@@ -3,10 +3,16 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Events\UserOnboardingEVent;
+use App\Helper\Otp;
+use App\Helper\Wallet;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Jobs\OnboardUserJob;
+use App\Jobs\SendMailJob;
 use App\Mail\UserUnboarding;
+use App\Models\Otp as OtpToken;
+use App\Models\User;
+use App\Models\Wallet as Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -21,10 +27,50 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 class UserManagementController extends BaseController
 {
 
-    /**
-     *This function loads the customer data from the database then converts it
-     * into an Array that will be exported to Excel
-     */
+   public function onBoardUser(Request $request){
+
+       $validator = Validator::make($request->all(), [
+           'name' => 'required',
+           'email' => 'required|email|unique:users,email',
+           'phone_number' => 'required|string|unique:users,phone_number'
+       ]);
+
+       if($validator->fails()){
+           return $this->sendError('Error validation', $validator->errors());
+       }
+       DB::beginTransaction();
+       $user = new User();
+       $password = Str::random(6);;
+       $accountNumber = Wallet::generate();
+       $token  = Otp::generate();
+
+       $user->name         = $request->name;
+       $user->email        = $request->email;
+       $user->phone_number = $request->phone_number;
+       $user->email_verified_at = now();
+       $user->password     = Hash::make($password);
+       $user->save();
+
+       $walletCreation                 = new Account();
+       $walletCreation->account_number = $accountNumber;
+       $walletCreation->user_id        = $user->id;
+       $walletCreation->save();
+       
+       $success['user']   =  $user;
+       $success['wallet'] = $walletCreation;
+
+       dispatch(new OnboardUserJob($request->name, $request->email, $password));
+
+       DB::commit();
+
+       return $this->sendResponse($success, 'User created successfully');
+
+
+   }
+
+
+
+
     public  function  exportData(){
         $data = DB::table('users')->orderBy('created_at', 'DESC')->get();
         $data_array [] = array("Name","Email","Phone_Number",);
@@ -100,14 +146,23 @@ class UserManagementController extends BaseController
                     'email' => $sheet->getCell( 'B' . $row )->getValue(),
                     'phone_number' => $sheet->getCell( 'C' . $row )->getValue(),
                     'password' => Hash::make($password),
+                    'email_verified_at' => now(),
                 ];
 
                 $startcount++;
-                
+
                 dispatch(new OnboardUserJob($data[$index]['name'],$data[$index]['email'], $password));
 
             }
             DB::table('users')->insert($data);
+            foreach($data as $index => $user){
+                $userData =  User::where('email',$user['email'])->first();
+                $accountNumber = Wallet::generate();
+                $walletCreation                 = new Account();
+                $walletCreation->account_number = $accountNumber;
+                $walletCreation->user_id        = $userData->id;
+                $walletCreation->save();
+            }
         } catch (Exception $e) {
             $error_code = $e->errorInfo[1];
 

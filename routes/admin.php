@@ -17,8 +17,9 @@ Route::group(['prefix' => 'v1'], function() {
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('make-payment',[PaymentController::class , 'makePayment'])->name('make_payment');
-        Route::post('bulk-import-users',[UserManagementController::class ,'bulkUserImport']);
-        Route::get('bulk-export-users',[UserManagementController::class ,'exportData']);
+        Route::post('on-board-user',[UserManagementController::class ,'onBoardUser'])->name('onboard-user');
+        Route::post('bulk-import-users',[UserManagementController::class ,'bulkUserImport'])->name('bulk-import');
+        Route::get('bulk-export-users',[UserManagementController::class ,'exportData'])->name('bulk-export');
 
 
 //        Route::get('verify-payment/{reference}',[PaymentController::class ,'confirmPayment'])->name('verify_payment');
