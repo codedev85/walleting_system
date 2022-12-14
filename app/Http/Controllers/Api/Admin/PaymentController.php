@@ -94,12 +94,24 @@ class PaymentController extends BaseController
 
         $isSuccess = $verify->data->gateway_response;
 
-        if ($verify->status) {
-            $success['data']      =   $email;
-            $success['amount']    =  $verify->data->amount/100;
-            $success['isSuccess'] =  $isSuccess;
-            $success['reference'] = $reference;
-            return $this->sendResponse($success, 'Payment made successfully');
+
+        //check if payment is successful
+
+        if($verify->status)
+        {
+            $success['data']          =  $email;
+            $success['amount']        =  $verify->data->amount/100;
+            $success['isSuccess']     =  $isSuccess;
+            $success['reference']     =  $reference;
+            $isPayment                =  $this->paymentRepository->verifyPayment($reference , $email);
+
+            if(!$isPayment['success']){
+                $success['data'] =  $isPayment['success'];
+                return $this->sendError($success,  $isPayment['message']);
+            }else{
+                $success['data'] =  $isPayment;
+                return $this->sendResponse($success,  $isPayment['message']);
+            }
         }else{
             $success['data']      = $email;
             $success['amount']    = 0;

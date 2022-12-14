@@ -9,7 +9,8 @@ Route::group(['prefix' => 'v1'], function() {
 
 //    Route::post('create-account', [AuthController::class, 'createAccount'])->name('create_account');
     Route::post('authenticate',[AuthController::class , 'authenticateAdmin'])->name('authenticate_admin');
-    //This is a webhook endpoint connected to paystack n
+    //This is a webhook endpoint connected to paystack
+
     Route::post('verify-payment',[PaymentController::class , 'verifyPaymentWithWebHook'])->name('verify_payment');
     Route::get('verify-payment/{reference}',[PaymentController::class ,'verifyReference'])->name('verify_payment');
 

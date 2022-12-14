@@ -7,6 +7,8 @@ use App\Events\WalletDebitTransaction;
 use App\Events\WalletFundingEvent;
 use App\Events\WalletTopUp;
 use App\Events\WalletTransactions;
+use App\Jobs\SendMailJob;
+use App\Jobs\WalletFundingJob;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 
@@ -97,7 +99,8 @@ class Wallet
                     'transaction_type' =>  $transactionType,
                     'info'             =>  $info
                 ]);
-              //  $transactionType === 'top-up' ? event(new  WalletFundingEvent($user, $amount)) : event(New  WalletFundingEvent($user, $amount));
+                $transactionType === 'top-up' ?? dispatch(new WalletFundingJob($user , $amount));
+//                    dispatch(new WalletFundingJob($user , $amount));
 
                 $response = [
                     'success' => true,
@@ -127,7 +130,7 @@ class Wallet
      * @param bool $isCommission
      * @return array
      */
-    public static function debit($user, $amount,$beneficiaryId, $info, $transactionType, $allow_negative = false, $isCommission = false)
+    public static function debit($user, $amount,$beneficiaryId, $info, $transactionType="fund-withdrawal", $allow_negative = false, $isCommission = false)
     {
         try {
 
@@ -157,8 +160,8 @@ class Wallet
                 $wallet->balance -= $amount;
                 $wallet->updated_at = now();
                 $wallet->save();
-
-                $wallet->transactions()->create([
+                $transaction = new Transaction();
+                $transaction->create([
                     'ref'              => self::generateTrnxRef(),
                     'amount'           => $amount,
                     'wallet_id'        => $wallet->id,
@@ -167,14 +170,14 @@ class Wallet
                     'prev_balance'     => $prev_bal,
                     'new_balance'      => $wallet->balance,
                     'status'           => 'successful',
-                    'beneficiary_id'    => $beneficiaryId ?? null,
-                    'transaction_type' =>  $transactionType,
+                    'beneficiary_id'    => 1,
+                    'transaction_type' => $transactionType,
                     'info'             => $info
                 ]);
 
                 // send notification
-                $beneficiary = \App\Models\User::find($beneficiaryId);
-                event(New WalletDebitTransaction($user, $amount ,$beneficiary));
+//                $beneficiary = \App\Models\User::find($beneficiaryId);
+//                event(New WalletDebitTransaction($user, $amount ,$beneficiary));
                 $response = [
                     'success' => true,
                     'message' => 'Wallet debit was successful.'

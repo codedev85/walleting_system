@@ -2,17 +2,12 @@
 
 namespace App\Models;
 
-use App\Traits\UUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Transaction extends Model
+class Bank extends Model
 {
-    use HasFactory, UUID;
+    use HasFactory;
 
     protected $guarded = ['id'];
-
-    public function wallet(){
-        return $this->belongsTo(Wallet::class);
-    }
 }

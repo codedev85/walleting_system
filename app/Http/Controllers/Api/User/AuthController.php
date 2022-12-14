@@ -85,7 +85,8 @@ class AuthController extends BaseController
         }
 
         $success['token'] = auth()->user()->createToken('API Token')->plainTextToken;
-        $success['user'] = auth()->user();
+        $success['user'] = auth()->user()->wallet;
+
 
         return $this->sendResponse($success, 'User signed in');
 
@@ -93,9 +94,12 @@ class AuthController extends BaseController
 
 
     public function myProfile(){
-
-        $success['user'] = auth()->user();
-        $success['wallet'] = auth()->user()->wallet;
+        $user                     = auth()->user();
+        $success['user']          = $user ;
+        $success['wallet']        = $user->wallet;
+        $success['banks']         = $user->banks;
+        $success['transactions']  = $user->MyTransaction;
+        $success['walletBalance'] = $user->MyWalletBalance;
 
         return $this->sendResponse($success, 'User profile fetched');
     }

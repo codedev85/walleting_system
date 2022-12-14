@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\WalletFundingEvent;
-use App\Mail\VerifyEmail;
+use App\Mail\WalletTopUp;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
@@ -29,7 +29,7 @@ class WalletFundingListener
     public function handle(WalletFundingEvent $event)
     {
         Mail::to($event->user->email)->send(
-            new VerifyEmail($event->user, $event->amount)
+            new WalletTopUp($event->user, $event->amount)
         );
     }
 }

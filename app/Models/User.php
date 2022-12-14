@@ -48,4 +48,18 @@ class User extends Authenticatable
     public function wallet(){
         return $this->HasOne(Wallet::class);
     }
+
+    public function transactions(){
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function banks(){
+        return $this->hasMany(MyBank::class);
+    }
+    public function getMyTransactionAttribute(){
+        return $this->transactions;
+    }
+    public function getMyWalletBalanceAttribute(){
+        return $this->wallet->balance;
+    }
 }
