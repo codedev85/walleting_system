@@ -7,7 +7,7 @@
 <p>Account Name: {{$bank['account_name']}}</p>
 <p>Account Number :{{$bank['account_number']}}</p>
 
-    
+
 Thanks,<br>
 {{ config('app.name') }}
 </x-mail::message>
