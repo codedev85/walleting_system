@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api\User;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Interfaces\CashoutInterface;
+use App\Jobs\AdminNotifier;
+use App\Jobs\AdminNotifierJob;
+use App\Jobs\SuspensionMailJob;
 use App\Models\MyBank;
 use App\Models\WithdrawalPin;
 use Illuminate\Http\JsonResponse;
@@ -61,7 +64,7 @@ class CashOutController extends BaseController
             return $this->sendError('Oops an Error Occurred',  ['Invalid password']);
         }
 
-        $getBank =  MyBank::where(['user_id' => $userId , 'id' => $request->bank_id])->first();
+        $getBank =  MyBank::where(['user_id' => $userId , 'id' => $request->bank_id])->with('bank')->first();
 
         if(!$getBank){
             return $this->sendError('Oops',  ['Please select a bank assigned to you']);
@@ -76,6 +79,11 @@ class CashOutController extends BaseController
         }
 
         $success['data'] = $verifyBank;
+
+        //after successful cash-out invalidate the withdrawal token and notify admin
+        $this->invalidateWithdrawalToken();
+
+        $this->adminNotifierTrigger($request->amount , auth()->user() , $getBank);
 
         return $this->sendResponse($success, 'Cash withdrawal is successful');
     }
@@ -106,6 +114,8 @@ class CashOutController extends BaseController
         if((int) $wallet->failed_withdrawal_attempt  === (int)  config('withdrawal.max_attempt')){
              $wallet->status = 'SUSPENDED';
              $wallet->save();
+             $type = 'Wallet';
+             dispatch(new SuspensionMailJob($user, $type));
              return false;
         }
         return true;
@@ -118,4 +128,21 @@ class CashOutController extends BaseController
         $wallet->save();
         return $wallet;
     }
+
+    private function invalidateWithdrawalToken(){
+        $userId = auth()->user()->id;
+        $hasdhedPin =  WithdrawalPin::where(['user_id' => $userId])->latest()->first();
+        $hasdhedPin->update(['expires_at' => now()]);
+        return true;
+    }
+
+    private function adminNotifierTrigger($amount , $user , $bank){
+
+        if(config('admin.notify_admin')){
+            dispatch(new AdminNotifierJob(config('admin.notifier_email'), $amount ,$user ,$bank));
+            return true ;
+        }
+        return false;
+    }
+
 }

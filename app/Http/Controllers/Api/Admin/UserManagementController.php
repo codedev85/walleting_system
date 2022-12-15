@@ -7,8 +7,10 @@ use App\Helper\Otp;
 use App\Helper\Wallet;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
+use App\Jobs\ActivationMailJob;
 use App\Jobs\OnboardUserJob;
 use App\Jobs\SendMailJob;
+use App\Jobs\SuspensionMailJob;
 use App\Mail\UserUnboarding;
 use App\Models\Otp as OtpToken;
 use App\Models\User;
@@ -55,7 +57,7 @@ class UserManagementController extends BaseController
        $walletCreation->account_number = $accountNumber;
        $walletCreation->user_id        = $user->id;
        $walletCreation->save();
-       
+
        $success['user']   =  $user;
        $success['wallet'] = $walletCreation;
 
@@ -67,6 +69,38 @@ class UserManagementController extends BaseController
 
 
    }
+
+   public function suspendUser($user_id){
+
+       DB::beginTransaction();
+       $user = User::where('id',$user_id)->first();
+
+       $user->update([
+           'isBanned' => true,
+       ]);
+       DB::commit();
+       $success['user']   =  $user;
+       $type = 'Account';
+       dispatch(new SuspensionMailJob($user, $type));
+       return $this->sendResponse($success, 'User suspended  successfully');
+
+   }
+
+    public function activateUser($user_id){
+
+        DB::beginTransaction();
+        $user = User::where('id',$user_id)->first();
+
+        $user->update([
+            'isBanned' => 'false',
+        ]);
+        DB::commit();
+        $success['user']   =  $user;
+        $type = 'Account';
+        dispatch(new ActivationMailJob($user, $type));
+        return $this->sendResponse($success, 'User activated  successfully');
+
+    }
 
 
 

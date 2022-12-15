@@ -17,16 +17,19 @@ class CheckBannedUser
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::check() && auth()->user()->isBanned !== false){
+
+        if(Auth::check() && auth()->user()->isBanned === "false"){
             return $next($request);
+        }else{
+//            auth()->user()->tokens()->delete();
+            $response = [
+                'success' => false,
+                'message' => "Your access to this platform has been suspend , contact support",
+            ];
+
+            return response()->json($response, 404);
         }
 
-        $response = [
-            'success' => false,
-            'message' => "Your access to this platform has been suspend , contact support",
-        ];
-
-        return response()->json($response, 404);
 
     }
 }

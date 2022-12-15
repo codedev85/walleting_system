@@ -13,6 +13,7 @@ use App\Jobs\WalletFundingJob;
 use App\Mail\CashOutMail;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class Wallet
 {
@@ -181,8 +182,13 @@ class Wallet
 
                 // send notification
                 if($transactionType === 'fund-withdrawal'){
-                    dispatch(new CashOutJob($user , $amount));
+//                    dispatch(new CashOutJob($user , $amount));
+                    Mail::to($user->email)->send(
+                        new CashOutMail($user, $amount)
+                    );
                 }
+
+
                 $response = [
                     'success' => true,
                     'message' => 'Wallet debit was successful.'

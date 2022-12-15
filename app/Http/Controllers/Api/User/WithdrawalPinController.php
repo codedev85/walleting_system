@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 class WithdrawalPinController extends BaseController
 {
     public function generatePin(){
+
         DB::beginTransaction();
         $otp = Otp::generate();
         $user =  auth()->user();

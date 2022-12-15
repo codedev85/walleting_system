@@ -9,22 +9,22 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CashOutMail extends Mailable
+class ActivationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
-    public $amount;
+    public $type;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user , $amount)
+    public function __construct($user , $type)
     {
-        $this->user   = $user;
-        $this->amount = $amount;
+        $this->user = $user;
+        $this->type = $type;
     }
 
     /**
@@ -34,11 +34,12 @@ class CashOutMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.cashout')
-                        ->subject('Cash Out Mail')
-                        ->with('user', $this->user)
-                        ->with('amount', $this->amount);
+        return $this->markdown('emails.activation-notice')
+            ->subject('Activation Mail')
+            ->with('type', $this->type)
+            ->with('user', $this->user);
     }
+
 
     /**
      * Get the message envelope.
@@ -48,7 +49,7 @@ class CashOutMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Cash Out Mail',
+            subject: 'Activation Mail',
         );
     }
 
@@ -60,7 +61,7 @@ class CashOutMail extends Mailable
     public function content()
     {
         return new Content(
-            markdown: 'emails.cashout',
+            markdown: 'emails.activation-notice',
         );
     }
 

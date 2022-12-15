@@ -9,35 +9,24 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CashOutMail extends Mailable
+class AdminNotifier extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
     public $amount;
+    public $bank;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user , $amount)
+    public function __construct($user , $amount ,$bank)
     {
-        $this->user   = $user;
+        $this->user = $user;
         $this->amount = $amount;
-    }
-
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
-    {
-        return $this->markdown('emails.cashout')
-                        ->subject('Cash Out Mail')
-                        ->with('user', $this->user)
-                        ->with('amount', $this->amount);
+        $this->bank = $bank;
     }
 
     /**
@@ -48,7 +37,7 @@ class CashOutMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Cash Out Mail',
+            subject: 'Admin Notifier',
         );
     }
 
@@ -60,7 +49,7 @@ class CashOutMail extends Mailable
     public function content()
     {
         return new Content(
-            markdown: 'emails.cashout',
+            markdown: 'emails.admin-notifier',
         );
     }
 

@@ -2,33 +2,34 @@
 
 namespace App\Jobs;
 
-use App\Events\CashOutEvent;
-use App\Mail\CashOutMail;
+use App\Mail\ActivationMail;
+use App\Mail\SuspensionMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 
-class CashOutJob implements ShouldQueue
+class ActivationMailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+
     public $user;
-    public $amount;
+    public $type;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($user , $amount)
+    public function __construct($user ,$type)
     {
         $this->user = $user;
-        $this->amount = $amount;
+        $this->type = $type;
     }
-
     /**
      * Execute the job.
      *
@@ -36,6 +37,8 @@ class CashOutJob implements ShouldQueue
      */
     public function handle()
     {
-        event(New CashOutEvent($this->user, $this->amount));
+        Mail::to($this->user->email)->send(
+            new ActivationMail($this->user, $this->type)
+        );
     }
 }

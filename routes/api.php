@@ -28,7 +28,9 @@ Route::group(['prefix' => 'v1'], function() {
     Route::post('authenticate',[AuthController::class , 'signin'])->name('signin');
 
     Route::group(['middleware' => ['auth:sanctum','is_banned']], function () {
+
         Route::post('verify-otp',[AuthController::class ,'verifyOtp'])->name('verify_otp');
+
         Route::group(['middleware' => ['must_verify']], function () {
 
             Route::get('profile',[AuthController::class ,'myProfile'])->name('profile');

@@ -1,11 +1,7 @@
 <x-mail::message>
-# Introduction
+<p>hi {{$user['name']}}</p>
 
-The body of your message.
-
-<x-mail::button :url="''">
-Button Text
-</x-mail::button>
+<p>You have successfully withdrawn an amount of N {{$amount}} from your wallet to your bank</p>
 
 Thanks,<br>
 {{ config('app.name') }}
