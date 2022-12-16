@@ -30,7 +30,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['guard_name' => 'admin','name' => 'revoke_permission_role']);
         Permission::create(['guard_name' => 'admin','name' => 'admin_create_account']);
         Permission::create(['guard_name' => 'admin','name' => 'fetch_permissions']);
-        
+
        $role =  Role::where(['guard_name' => 'admin', 'name' => 'Administrator'])->first();
        $permissions =  Permission::where(['guard_name' => 'admin'])->get();
        foreach( $permissions as $permission){

@@ -68,4 +68,8 @@ class User extends Authenticatable
     public function pins(){
         return $this->hasMany(WithdrawalPin::class);
     }
+
+    public function lastseen(){
+        return $this->hasOne(LastSeen::class);
+    }
 }

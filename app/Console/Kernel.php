@@ -16,6 +16,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('invalidate:withdrawal-pin')->everyFifteenMinutes();
+        $schedule->command('invalidate:otp')->everyFifteenMinutes();
+        $schedule->command('logout:in-active-users')->everyMinute();
+
+
     }
 
     /**

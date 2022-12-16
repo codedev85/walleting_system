@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'must_verify' =>\App\Http\Middleware\CheckEmailVerification::class,
         'is_banned' =>\App\Http\Middleware\CheckBannedUser::class,
         'permissions' => \App\Http\Middleware\Permissions::class,
+        'last_seen' => \App\Http\Middleware\LastSeen::class,
     ];
 }

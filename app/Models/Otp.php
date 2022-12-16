@@ -11,4 +11,12 @@ class Otp extends Model
     use HasFactory, UUID;
 
     protected $guarded = ['id'];
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
 }

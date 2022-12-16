@@ -31,7 +31,7 @@ Route::group(['prefix' => 'v1'], function() {
 
         Route::post('verify-otp',[AuthController::class ,'verifyOtp'])->name('verify_otp');
 
-        Route::group(['middleware' => ['must_verify']], function () {
+        Route::group(['middleware' => ['must_verify','last_seen']], function () {
 
             Route::get('profile',[AuthController::class ,'myProfile'])->name('profile');
             //bank list

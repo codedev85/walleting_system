@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
-use App\Traits\UUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class WithdrawalPin extends Model
+class LastSeen extends Model
 {
-    use HasFactory ,UUID;
+    use HasFactory;
 
     protected $guarded = ['id'];
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
+    protected $table = 'last_seen';
 
     /**
      * The attributes that should be cast.
@@ -21,6 +18,10 @@ class WithdrawalPin extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'expires_at' => 'datetime',
+        'last_seen' => 'datetime',
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }
