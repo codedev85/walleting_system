@@ -60,7 +60,7 @@ class CashOutRepository implements CashoutInterface
             return  $debitWallet ;
         }else{
             $response = ['success' => false ,
-                'message' =>  'Could resolve bank issuer'];
+                'message' =>  'Could not resolve bank issuer'];
 
             return $response;
         }

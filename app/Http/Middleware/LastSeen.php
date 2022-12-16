@@ -18,7 +18,7 @@ class LastSeen
     public function handle(Request $request, Closure $next)
     {
         if(auth()->check()){
-           LastSeenActivity::firstOrCreate(
+           LastSeenActivity::updateOrCreate(
                 ['user_id' =>  auth()->user()->id],
                 ['last_seen' => now()]
             );
