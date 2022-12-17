@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends BaseController
 {
@@ -39,7 +40,7 @@ class AuthController extends BaseController
             return $this->sendResponse($success, 'Admin signed in');
         }
         else{
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised'] ,Response::HTTP_UNAUTHORIZED);
         }
     }
 

@@ -22,13 +22,16 @@ class Permissions
         $user = auth()->user();
         $roles = $user->roles;
 
+//        $permissions = [];
         foreach($roles as $role){
-            $permissions = $role->permissions->pluck('name');
+            $permissions =  $role->permissions->pluck('name');
+//            array_push($permissions , $role->permissions->pluck('name') ) ;
         }
 
         if (auth()->guest()) {
             return response()->json(['success' => false , 'error' => 'unauthorized']);
         }
+
 
 
         foreach ($permissions as $perm) {

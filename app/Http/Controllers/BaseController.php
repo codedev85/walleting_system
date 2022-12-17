@@ -13,7 +13,7 @@ class BaseController extends Controller
      * @param $message
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendResponse($result, $message)
+    public function sendResponse($result, $message ,$status = 201)
     {
         $response = [
             'success' => true,
@@ -21,7 +21,7 @@ class BaseController extends Controller
             'message' => $message,
         ];
 
-        return response()->json($response, 200);
+        return response()->json($response, $status);
     }
 
 

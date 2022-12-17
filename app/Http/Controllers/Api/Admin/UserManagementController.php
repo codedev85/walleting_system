@@ -76,7 +76,7 @@ class UserManagementController extends BaseController
        $user = User::where('id',$user_id)->first();
 
        $user->update([
-           'isBanned' => true,
+           'isBanned' => 'true',
        ]);
        DB::commit();
        $success['user']   =  $user;

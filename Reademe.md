@@ -64,6 +64,10 @@ Reference method involves the frontend engineer passing the reference generated 
 
 https://codedev85.gitbook.io/walleting-system-documentation/
 
+**PHP UNIT TESTING**
+
+  Run php artisan test
+
 **Notice**
 
 While trying to withdraw funds from wallet to the bank , you need to test with correct bank details e.g. Bank ID  and account number , else you will get an error message

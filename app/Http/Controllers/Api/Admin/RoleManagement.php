@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpFoundation\Response;
 
 class RoleManagement extends BaseController
 {
@@ -54,7 +55,7 @@ class RoleManagement extends BaseController
 
         $success['permission'] = $permission;
 
-        return $this->sendResponse($success, 'Permission assigned to role  successfully');
+        return $this->sendResponse($success, 'Permission assigned to role  successfully' ,Response::HTTP_CREATED);
     }
 
 

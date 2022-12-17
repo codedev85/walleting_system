@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class WithdrawalPinController extends BaseController
@@ -28,6 +29,6 @@ class WithdrawalPinController extends BaseController
         Mail::to($user->email)->send(new  WithdrawalOtp($user ,$otp));
         $success['otp'] ='Otp generated  successfully';
         DB::commit();
-        return $this->sendResponse($success, 'Otp generated  successfully');
+        return $this->sendResponse($success, 'Otp generated  successfully' , Response::HTTP_CREATED);
     }
 }

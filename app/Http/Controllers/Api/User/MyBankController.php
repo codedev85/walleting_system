@@ -9,6 +9,7 @@ use App\Models\MyBank;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class MyBankController extends BaseController
 {
@@ -49,6 +50,6 @@ class MyBankController extends BaseController
         $createBank->save();
         DB::commit();
         $success['bank_list'] = $createBank;
-        return $this->sendResponse($success, 'Bank created successfully');
+        return $this->sendResponse($success, 'Bank created successfully',Response::HTTP_CREATED);
     }
 }

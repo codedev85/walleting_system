@@ -19,9 +19,11 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Wallet as Account;
 use App\Models\Otp as OtpToken;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends BaseController
 {
+
     public function createAccount(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -29,11 +31,12 @@ class AuthController extends BaseController
             'email'        => 'required|string|email|unique:users,email',
             'password'     => 'required|string|min:6|confirmed',
             'phone_number' => 'required|string|unique:users,phone_number'
+
         ]);
 
 
         if($validator->fails()){
-            return $this->sendError('Error validation', $validator->errors());
+            return $this->sendError('Error validation', $validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         DB::beginTransaction();
@@ -69,7 +72,7 @@ class AuthController extends BaseController
 
         DB::commit();
 
-        return $this->sendResponse($success, 'User created successfully');
+        return $this->sendResponse($success, 'User created successfully' ,Response::HTTP_CREATED);
 
     }
     //use this method to signin users
@@ -81,14 +84,14 @@ class AuthController extends BaseController
         ]);
 
         if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            return $this->sendError('Credentials does not match', $attr->errors());
+            return $this->sendError('Credentials does not match', $attr->errors(),Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $success['token'] = auth()->user()->createToken('API Token')->plainTextToken;
         $success['user'] = auth()->user()->wallet;
 
 
-        return $this->sendResponse($success, 'User signed in');
+        return $this->sendResponse($success, 'User signed in',Response::HTTP_OK);
 
     }
 
@@ -101,7 +104,7 @@ class AuthController extends BaseController
         $success['transactions']  = $user->MyTransaction;
         $success['walletBalance'] = $user->MyWalletBalance;
 
-        return $this->sendResponse($success, 'User profile fetched');
+        return $this->sendResponse($success, 'User profile fetched',Response::HTTP_OK);
     }
 
 
