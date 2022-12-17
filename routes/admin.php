@@ -12,17 +12,21 @@ Route::group(['prefix' => 'v1'], function() {
 
 
     Route::post('authenticate',[AuthController::class , 'authenticateAdmin'])->name('authenticate_admin');
+
     //This is a webhook endpoint , it should be inputed into  paystack webhook url section
     //read ReadMe.md for more information;
 
-    Route::post('verify-payment',[PaymentController::class , 'verifyPaymentWithWebHook'])->name('verify_payment');
+    Route::post('verify-payment',[PaymentController::class , 'verifyPaymentWithWebHook'])->name('verify_webhook_payment');
 
-    Route::get('verify-payment/{reference}',[PaymentController::class ,'verifyReference'])->name('verify_payment');
 
-    Route::group(['middleware' => ['auth:sanctum' ,'permissions']], function () {
+
+    Route::group(['middleware' => ['auth:sanctum','permissions']], function () {
 
         Route::post('create-admin', [AdminManagement::class, 'createAccount'])->name('admin_create_account');
+
         Route::post('make-payment',[PaymentController::class , 'makePayment'])->name('make_payment');
+        Route::get('verify-payment/{reference}',[PaymentController::class ,'verifyReference'])->name('verify_reference_payment');
+
         Route::post('on-board-user',[UserManagementController::class ,'onBoardUser'])->name('onboard-user');
         Route::post('bulk-import-users',[UserManagementController::class ,'bulkUserImport'])->name('bulk-import');
         Route::get('bulk-export-users',[UserManagementController::class ,'exportData'])->name('bulk-export');

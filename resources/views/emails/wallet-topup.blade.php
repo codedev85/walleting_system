@@ -1,11 +1,9 @@
 <x-mail::message>
-# Introduction
+<p>Hello {{$user['name']}}</p>
 
-The body of your message.
+<p>Admin has credited your wallet with the sum of  N {{$amount}}</p>
 
-<x-mail::button :url="''">
-Button Text
-</x-mail::button>
+
 
 Thanks,<br>
 {{ config('app.name') }}

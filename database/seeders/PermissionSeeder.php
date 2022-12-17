@@ -19,6 +19,7 @@ class PermissionSeeder extends Seeder
         Role::create(['guard_name' => 'admin', 'name' => 'Administrator']);
 
         Permission::create(['guard_name' => 'admin','name' => 'make_payment']);
+        Permission::create(['guard_name' => 'admin','name' => 'verify_reference_payment']);
         Permission::create(['guard_name' => 'admin','name' => 'onboard-user']);
         Permission::create(['guard_name' => 'admin','name' => 'bulk-import']);
         Permission::create(['guard_name' => 'admin','name' => 'bulk-export']);
@@ -30,6 +31,8 @@ class PermissionSeeder extends Seeder
         Permission::create(['guard_name' => 'admin','name' => 'revoke_permission_role']);
         Permission::create(['guard_name' => 'admin','name' => 'admin_create_account']);
         Permission::create(['guard_name' => 'admin','name' => 'fetch_permissions']);
+
+
 
        $role =  Role::where(['guard_name' => 'admin', 'name' => 'Administrator'])->first();
        $permissions =  Permission::where(['guard_name' => 'admin'])->get();
